@@ -61,19 +61,22 @@ const Profile = () => {
 };
 export default Profile;
 
-export const action = async ({ request }) => {
-  const formData = await request.formData();
-  const file = formData.get('avatar');
-  if (file && file.size > 500000) {
-    toast.error('Image size too large');
-    return null;
-  }
-  try {
-    await customFetch.patch('/users/update-user', formData);
-    toast.success('Profile updated successfully');
-    return redirect('/dashboard');
-  } catch (error) {
-    toast.error(error?.response?.data?.msg);
-    return error;
-  }
-};
+export const action =
+  (queryClient) =>
+  async ({ request }) => {
+    const formData = await request.formData();
+    const file = formData.get('avatar');
+    if (file && file.size > 500000) {
+      toast.error('Image size too large');
+      return null;
+    }
+    try {
+      await customFetch.patch('/users/update-user', formData);
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      toast.success('Profile updated successfully');
+      return redirect('/dashboard');
+    } catch (error) {
+      toast.error(error?.response?.data?.msg);
+      return error;
+    }
+  };

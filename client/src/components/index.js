@@ -21,3 +21,7 @@ export { default as SubmitBtn } from './SubmitBtn';
 export { default as StatsContainer } from './StatsContainer';
 
 export { default as CharsContainer } from './CharsContainer';
+
+export { default as Loading } from './Loading';
+
+export { default as ErrorElement } from './ErrorElement';

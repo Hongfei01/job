@@ -1,12 +1,16 @@
-import { Outlet, redirect, useLoaderData } from 'react-router-dom';
+import { Outlet, redirect, useNavigation } from 'react-router-dom';
 
 import Wrapper from '../assets/wrappers/Dashboard';
-import { BigSidebar, Navbar, SmallSidebar } from '../components';
+import { BigSidebar, Navbar, SmallSidebar, Loading } from '../components';
 import { DashboardProvider } from '../context/DashboardContext';
-import { customFetch } from '../utils/customFetch';
+import { useQuery } from '@tanstack/react-query';
+import { useUser } from '../features/authenciation/useUser';
 
 const DashboardLayout = () => {
-  const { user } = useLoaderData();
+  const { data: user } = useQuery(useUser);
+
+  const navigation = useNavigation();
+  const isLoading = navigation.state === 'loading';
 
   return (
     <DashboardProvider>
@@ -17,7 +21,7 @@ const DashboardLayout = () => {
           <div>
             <Navbar user={user} />
             <div className='dashboard-page'>
-              <Outlet context={{ user }} />
+              {isLoading ? <Loading /> : <Outlet context={{ user }} />}
             </div>
           </div>
         </main>
@@ -27,10 +31,9 @@ const DashboardLayout = () => {
 };
 export default DashboardLayout;
 
-export const loader = async () => {
+export const loader = (queryClient) => async () => {
   try {
-    const { data } = await customFetch.get('/users/current-user');
-    return data;
+    return await queryClient.ensureQueryData(useUser);
   } catch (error) {
     return redirect('/');
   }

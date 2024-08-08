@@ -6,6 +6,7 @@ import { customFetch } from '../utils/customFetch';
 
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useQueryClient } from '@tanstack/react-query';
 
 const DashboardContext = createContext();
 
@@ -15,6 +16,7 @@ export const DashboardProvider = ({ children }) => {
   const [showSidebar, setShowSidebar] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState(checkDarkTheme());
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     async function getCurrentUser() {
@@ -43,6 +45,7 @@ export const DashboardProvider = ({ children }) => {
   const logoutUser = async () => {
     navigate('/');
     await customFetch.get('/auth/logout');
+    queryClient.invalidateQueries();
     toast.success('logging out...');
   };
   return (

@@ -41,15 +41,18 @@ const AddJob = () => {
 };
 export default AddJob;
 
-export const action = async ({ request }) => {
-  const formData = await request.formData();
-  const data = Object.fromEntries(formData);
-  try {
-    await customFetch.post('/jobs', data);
-    toast.success('job added successfully');
-    return redirect('all-jobs');
-  } catch (error) {
-    toast.error(error?.response?.data?.msg);
-    return error;
-  }
-};
+export const action =
+  (queryClient) =>
+  async ({ request }) => {
+    const formData = await request.formData();
+    const data = Object.fromEntries(formData);
+    try {
+      await customFetch.post('/jobs', data);
+      queryClient.invalidateQueries({ queryKey: ['jobs'] });
+      toast.success('job added successfully');
+      return redirect('all-jobs');
+    } catch (error) {
+      toast.error(error?.response?.data?.msg);
+      return error;
+    }
+  };

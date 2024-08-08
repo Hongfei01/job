@@ -18,6 +18,9 @@ import userRouter from './routers/userRoute.js';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import helmet from 'helmet';
+
+import mongoSanitize from 'express-mongo-sanitize';
 
 //  middleware
 import { errorMiddleWare } from './middlewares/errorMiddleWare.js';
@@ -43,6 +46,8 @@ app.use(cookieParser());
 
 // use static folder
 app.use(express.static(path.resolve(__dirname, './client/dist')));
+app.use(helmet());
+app.use(mongoSanitize());
 
 // test
 app.get('/', (req, res) => {
